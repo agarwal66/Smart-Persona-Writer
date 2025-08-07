@@ -29,7 +29,14 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  useEffect(() => {
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+      btn.onclick = () => {
+        document.body.classList.toggle('dark-mode');
+      };
+    }
+  }, []);
   useEffect(() => {
     if (session?.user) {
       fetchPersonas();
@@ -129,6 +136,8 @@ export default function DashboardPage() {
   if (!session) return <p className="text-center mt-20 text-red-500 text-xl">Login required</p>;
 
   return (
+  //   <div className="dashboard-container">
+  // <div className="content-wrapper">
     <TooltipProvider>
       <div className={`dashboard-root ${darkMode ? "dark" : "light"}`}>
         {/* Header */}
@@ -137,46 +146,109 @@ export default function DashboardPage() {
             <h1>🧠 Smart Persona Writer</h1>
             <p>Craft personas & generate magical content with AI ✨</p>
           </div>
-          <Button onClick={() => setDarkMode(!darkMode)} variant="ghost">
-            {darkMode ? <Sun /> : <Moon />}
-          </Button>
+            {/* <button id="themeToggleBtn" className="fixed top-5 right-5 z-50 px-4 py-2 bg-indigo-600 text-white rounded-md">
+        Toggle Theme
+      </button> */}
         </header>
 
         {/* Persona & Generator */}
-        <section className="dashboard-section">
-          <Card className="glass-card">
-            <CardContent>
-              <h2>🎭 Create Persona</h2>
-              <form onSubmit={handleSubmit} className="grid gap-3">
-                <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-                <Input placeholder="Tone" value={form.tone} onChange={(e) => setForm({ ...form, tone: e.target.value })} />
-                <Input placeholder="Style" value={form.style} onChange={(e) => setForm({ ...form, style: e.target.value })} />
-                <Input placeholder="Domain" value={form.domain} onChange={(e) => setForm({ ...form, domain: e.target.value })} />
-                <Button type="submit">💾 Save</Button>
-              </form>
-            </CardContent>
-          </Card>
+        <div className="dashboard-wrapper">
+  <button id="themeToggleBtn" className="theme-toggle-btn">🌓</button>
 
-          <Card className="glass-card">
-            <CardContent>
-              <h2>⚡ Generate Content</h2>
-              <select value={selectedPersona} onChange={(e) => setSelectedPersona(e.target.value)}>
-                <option value="">Select Persona</option>
-                {personas.map((p) => (
-                  <option key={p._id} value={JSON.stringify(p)}>{p.name}</option>
-                ))}
-              </select>
-              <select value={selectedPrompt} onChange={(e) => setSelectedPrompt(e.target.value)}>
-                <option>Blog Post</option>
-                <option>Tweet Thread</option>
-                <option>Product Description</option>
-                <option>LinkedIn Post</option>
-              </select>
-              <Input placeholder="Topic" value={topic} onChange={(e) => setTopic(e.target.value)} />
-              <Button onClick={handleGenerate} disabled={loading}>{loading ? "⏳ Generating..." : "🚀 Generate"}</Button>
-            </CardContent>
-          </Card>
-        </section>
+  <section className="dashboard-section">
+    {/* 🎭 Create Persona */}
+    <Card className="glass-card create-persona">
+   <CardContent>
+  <h2>🎭 Create Persona</h2>
+  <form onSubmit={handleSubmit} className="grid gap-3">
+
+    <div>
+      <Input
+        placeholder="Name (e.g., Startup CEO, Friendly Teacher)"
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
+      />
+      <small className="text-muted text-xs">
+  What would you like to call this persona? (e.g., Technical Mentor, Motivational Speaker)
+</small>
+    </div>
+
+    <div>
+      <Input
+        placeholder="Tone (e.g., Formal, Casual, Humorous)"
+        value={form.tone}
+        onChange={(e) => setForm({ ...form, tone: e.target.value })}
+      />
+      <small className="text-muted text-xs">
+        What tone should the AI use? (e.g., Professional, Friendly, Sarcastic)
+      </small>
+    </div>
+
+    <div>
+      <Input
+        placeholder="Style (e.g., Short-form, Detailed, Bullet points)"
+        value={form.style}
+        onChange={(e) => setForm({ ...form, style: e.target.value })}
+      />
+      <small className="text-muted text-xs">
+        What is the writing style? (e.g., Concise, Descriptive, Bullet-based)
+      </small>
+    </div>
+
+    <div>
+      <Input
+        placeholder="Domain (e.g., Marketing, Education, Health)"
+        value={form.domain}
+        onChange={(e) => setForm({ ...form, domain: e.target.value })}
+      />
+      <small className="text-muted text-xs">
+        Which field or industry is this persona for? (e.g., Tech, Finance, Wellness)
+      </small>
+    </div>
+
+    <Button type="submit">💾 Save</Button>
+  </form>
+</CardContent>
+
+    </Card>
+
+    {/* ⚡ Generate Content */}
+    <Card className="glass-card generate-content">
+      <CardContent>
+        <h2>⚡ Generate Content</h2>
+        <select
+          value={selectedPersona}
+          onChange={(e) => setSelectedPersona(e.target.value)}
+        >
+          <option value="">Select Persona</option>
+          {personas.map((p) => (
+            <option key={p._id} value={JSON.stringify(p)}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedPrompt}
+          onChange={(e) => setSelectedPrompt(e.target.value)}
+        >
+          <option>Blog Post</option>
+          <option>Tweet Thread</option>
+          <option>Product Description</option>
+          <option>LinkedIn Post</option>
+        </select>
+        <Input
+          placeholder="Topic"
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+        />
+        <Button onClick={handleGenerate} disabled={loading}>
+          {loading ? '⏳ Generating...' : '🚀 Generate'}
+        </Button>
+      </CardContent>
+    </Card>
+  </section>
+</div>
+
 
         {/* Personas */}
         <section className="dashboard-personas">
@@ -249,6 +321,7 @@ export default function DashboardPage() {
         </section>
       </div>
     </TooltipProvider>
+    
   );
 }
 
